@@ -1,0 +1,125 @@
+{
+  "name": "unplugin-iconify-generator",
+  "type": "module",
+  "version": "0.0.0",
+  "private": false,
+  "description": "Automatically generate iconify format json, support Iconify Intellisense",
+  "author": "s3xysteak",
+  "license": "MIT",
+  "homepage": "https://github.com/s3xysteak/unplugin-iconify-generator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/s3xysteak/unplugin-iconify-generator.git"
+  },
+  "bugs": "https://github.com/s3xysteak/unplugin-iconify-generator/issues",
+  "keywords": [
+    "iconify",
+    "icon",
+    "vscode",
+    "unplugin"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./core": {
+      "import": {
+        "types": "./dist/core.d.mts",
+        "default": "./dist/core.mjs"
+      },
+      "require": {
+        "types": "./dist/core.d.cts",
+        "default": "./dist/core.cjs"
+      }
+    },
+    "./vite": {
+      "import": {
+        "types": "./dist/vite.d.mts",
+        "default": "./dist/vite.mjs"
+      },
+      "require": {
+        "types": "./dist/vite.d.cts",
+        "default": "./dist/vite.cjs"
+      }
+    },
+    "./rollup": {
+      "import": {
+        "types": "./dist/rollup.d.mts",
+        "default": "./dist/rollup.mjs"
+      },
+      "require": {
+        "types": "./dist/rollup.d.cts",
+        "default": "./dist/rollup.cjs"
+      }
+    },
+    "./esbuild": {
+      "import": {
+        "types": "./dist/esbuild.d.mts",
+        "default": "./dist/esbuild.mjs"
+      },
+      "require": {
+        "types": "./dist/esbuild.d.cts",
+        "default": "./dist/esbuild.cjs"
+      }
+    },
+    "./webpack": {
+      "import": {
+        "types": "./dist/webpack.d.mts",
+        "default": "./dist/webpack.mjs"
+      },
+      "require": {
+        "types": "./dist/webpack.d.cts",
+        "default": "./dist/webpack.cjs"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "dev": "pnpm build:only && pnpm --filter {./test/mock} i && pnpm --filter {./test/mock} dev",
+    "build": "tsc && unbuild",
+    "build:only": "unbuild",
+    "test": "vitest",
+    "test:once": "vitest run",
+    "release": "tsc && esno ./scripts/release.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "pathe": "^1.1.2",
+    "unplugin": "^1.12.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.24.1",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.1.0",
+    "eslint": "^9.8.0",
+    "esno": "^4.7.0",
+    "typescript": "^5.5.4",
+    "unbuild": "^2.0.0",
+    "vitest": "^2.0.5"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "eslint": "9"
+      }
+    }
+  }
+}
