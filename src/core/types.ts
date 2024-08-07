@@ -26,13 +26,15 @@ export interface IconsData {
   icons?: string
 }
 
-export interface IconsOptions {
+export interface IconsPluginData extends IconsData {
   /**
    * Indicates the output path of the iconify meta file.
    * @default './icons-meta'
    */
   output?: string
+}
 
+export interface IconsOptions {
   /**
    * Support `Iconify IntelliSense`. ! The options will change your `.vscode/settings.json`.
    * Use string to specify the path of the settings.json file.
@@ -46,4 +48,4 @@ export interface IconsOptions {
   base?: string
 }
 
-export type PluginOptions = IconsOptions & IconsData
+export type PluginOptions = IconsOptions & IconsPluginData

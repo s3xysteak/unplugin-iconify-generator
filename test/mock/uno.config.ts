@@ -6,7 +6,12 @@ export default defineConfig({
     presetUno(),
     presetIcons({
       collections: {
-        hi: FileSystemIconLoader('./src/icons'),
+        hi: FileSystemIconLoader(
+          './src/icons',
+          svg => svg
+            .replace(/(<svg.*?width=)"(.*?)"/, '$1"1em"')
+            .replace(/(<svg.*?height=)"(.*?)"/, '$1"1em"'),
+        ),
       },
     }),
   ],

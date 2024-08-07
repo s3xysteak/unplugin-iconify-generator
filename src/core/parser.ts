@@ -20,6 +20,9 @@ export async function normalizeIcons<T extends IconsData = IconsData>(options: T
 
     const iconsMap = new Map<string, IconifyMeta['icons'][string]>()
 
+    if (!icons.endsWith('.svg'))
+      return
+
     const paths = await fg.glob(icons, { cwd: base }).then(relatives => relatives.map(relative => resolve(base, relative)))
 
     await Promise.all(paths.map(async (path) => {
