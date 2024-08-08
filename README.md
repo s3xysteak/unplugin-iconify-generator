@@ -1,15 +1,15 @@
-# unplugin-iconify-generator
+# :tada: unplugin-iconify-generator
 
 English | [简体中文](./README-zh.md)
 
 Generate `iconify` format json files based on svg icons.
 
-## Features
+## :sparkles: Features
 
 1. Based on the Vscode extension `antfu.iconify`, provide DX support for customized icons collection.
-2. Normalize svg icons to `iconify` format json file.
+2. Normalize svg icons to `iconify` icons collection format json file.
 
-## Usage
+## :memo: Usage
 
 ```sh
 pnpm i -D unplugin-iconify-generator
@@ -29,7 +29,7 @@ import Iconify from 'unplugin-iconify-generator/vite'
 export default defineConfig({
   plugins: [
     Iconify({
-      prefix: 'hello',
+      prefix: 'foo',
       icons: './src/icons/*.svg',
 
       /** enable `antfu.iconify` support */
@@ -39,14 +39,14 @@ export default defineConfig({
 })
 ```
 
-According to the config above, assume that you have a icon `world.svg`, put it into `./src/icons`:
+According to the config above, assume that you have a icon `bar.svg`, put it into `./src/icons/`:
 
 - While **boot of project**, generate iconify format json in `<root>/icons-meta` as default.
-- Type in `i-hello-world` could have intelliSense and mini icon, which `hello` is the prefix, `world` is the name of icon. More features about DX please refer to the document of `antfu.iconify`.
+- Type in `i-foo-bar` could have intelliSense and mini icon, which `foo` is the prefix, `bar` is the name of icon. More features about DX please refer to the document of `antfu.iconify`.
 
 More details and options, please refer to the *Options* chapter below.
 
-### Normalize svg
+### Normalize svg icons collection
 
 Export core function by `/core`:
 
@@ -57,7 +57,7 @@ import { type IconifyMeta, normalizeIcons } from 'unplugin-iconify-generator/cor
 
 For more details plz refer to [source](/src/core)
 
-## Options
+## :wrench: Options
 
 In real project, the config could be like that:
 
@@ -86,7 +86,7 @@ The plugin accept a object or a object array as the config, which is:
 1. Icons collection config will be used to generate iconify format json files.
 2. Plugin options will work after merged by `Object.assign`.
 
-Icon set configuration options and plugin configuration options can be used together, although this will not make any difference. This can be useful in minimalist scenarios. Generally, it is recommended to distinguish between the configuration options (as in the example above) for easier maintenance.
+Icon set configuration options and plugin configuration options can be used together, although this will not make any difference. This can be useful in minimalist scenarios (like the example in *usage* chapter). Generally, it is recommended to distinguish between the configuration options (as in the example above) for easier maintenance.
 
 ### Icons collection configuration
 
@@ -97,4 +97,4 @@ Icon set configuration options and plugin configuration options can be used toge
 ### Plugin configuration
 
 - `iconifyIntelliSense`: A boolean, indicated whether to enable the support for `antfu.iconify`. Notice that it will edit `.vscode/settings.json`.
-- `base`: A string about absolute path, to indicate the root path. In default it is `process.cwd()`.
+- `base`: A string about absolute path, to indicate the root path which is `process.cwd()` in default. It will be used as the base path of other options.

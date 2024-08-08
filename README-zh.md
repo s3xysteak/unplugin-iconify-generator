@@ -1,15 +1,15 @@
-# unplugin-iconify-generator
+# :tada: unplugin-iconify-generator
 
 [English](./README.md) | 简体中文
 
 基于svg图标生成 `iconify` 格式的json文件。
 
-## 特性
+## :sparkles: 特性
 
 1. 基于Vscode扩展 `antfu.iconify` 为自定义图标库提供DX支持。
-2. 将svg图标批量归一化为 `iconify` 格式的json文件。
+2. 将svg图标规范化为 `iconify` 图标集格式的json文件。
 
-## 使用
+## :memo: 使用
 
 ```sh
 pnpm i -D unplugin-iconify-generator
@@ -29,7 +29,7 @@ import Iconify from 'unplugin-iconify-generator/vite'
 export default defineConfig({
   plugins: [
     Iconify({
-      prefix: 'hello',
+      prefix: 'foo',
       icons: './src/icons/*.svg',
 
       /** enable `antfu.iconify` support */
@@ -39,14 +39,14 @@ export default defineConfig({
 })
 ```
 
-根据上述配置，假设你有图标 `world.svg` ，将其放入 `./src/icons`:
+根据上述配置，假设你有图标 `bar.svg` ，将其放入 `./src/icons/`:
 
 - 在**项目启动时**，默认在 `<root>/icons-meta` 文件夹内生成 iconify 格式的json。
-- 在代码中输入 `i-hello-world` 可以获得相应的代码联想与图标缩略图，其中`hello`为配置中的前缀，`world`为图标名称。更多DX相关的特性请参见 `antfu.iconify` 文档。
+- 在代码中输入 `i-foo-bar` 可以获得相应的代码联想与图标缩略图，其中`foo`为配置中的前缀，`bar`为图标名称。更多DX相关的特性请参见 `antfu.iconify` 文档。
 
 更多详细选项与配置，请见下文 *选项* 章节。
 
-### 归一化svg
+### 规范化svg图标集
 
 通过 `/core` 导出核心功能：
 
@@ -57,7 +57,7 @@ import { type IconifyMeta, normalizeIcons } from 'unplugin-iconify-generator/cor
 
 详见 [源代码](/src/core)
 
-## 选项
+## :wrench: 选项
 
 在实际项目中，完整配置项可能是这样的：
 
@@ -86,15 +86,15 @@ export default defineConfig({
 1. 图标集配置项会被分别用于生成 iconify 格式的json。
 2. 插件配置项会通过 `Object.assign` 合并后使用。
 
-图标集配置项与插件配置项可以混合使用，尽管这不会带来任何差异，这在极简的情况下可能有用。一般来说，建议将配置项区分开（如上述例子），以方便维护。
+图标集配置项与插件配置项可以混合使用，尽管这不会带来任何差异，这在极简的情况下可能有用（如 *使用* 章节的例子）。一般来说，建议将配置项区分开（如上述例子），以方便维护。
 
 ### 图标集配置项：
 
-- `prefix`: 一个字符串，图标集的前缀，如 `i-my-icon` 中，`my`是前缀，`icon`是svg名称。
+- `prefix`: 一个字符串，作为图标集的前缀，如 `i-foo-bar` 中，`foo`是前缀，`bar`是svg名称。
 - `icons`: 一个 [glob](https://github.com/mrmlnc/fast-glob) 路径字符串，用于指示哪些图标会被收录进此图标集内。顺带一提，在这里使用`.svg`以外的文件类型是无意义的。
 - `output`: 一个路径字符串，用来指示该图标集的 iconify 格式json文件生成在什么地方。默认为根目录下的 `icons-meta` 文件夹。
 
 ### 插件配置项：
 
 - `iconifyIntelliSense`: 一个布尔值，用于指示是否要开启对 `antfu.iconify` 扩展的支持。注意，这会对 `.vscode/settings.json` 进行修改。
-- `base`: 一个绝对路径字符串，用于指示根路径。默认为 `process.cwd()`。
+- `base`: 一个绝对路径字符串，用于指示根路径，默认为 `process.cwd()`。这会作为其他选项的基本路径使用。
