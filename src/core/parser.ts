@@ -3,6 +3,13 @@ import fg from 'fast-glob'
 import fs from 'fs-extra'
 import type { IconifyMeta, IconsData } from './types'
 
+/**
+ * 1. width
+ * 2. height
+ * 3. body
+ */
+export const SVG_REGEX = /<svg[^>]*?viewBox="\s*\d+\s+\d+\s+(\d+)\s+(\d+)\s*"[^>]*>(.*?)<\/svg>/s
+
 export async function normalizeIcons<T extends IconsData = IconsData>(options: T[], base: string) {
   /** key is prefix */
   const map = new Map<string, {
@@ -15,13 +22,10 @@ export async function normalizeIcons<T extends IconsData = IconsData>(options: T
       return
 
     const { prefix, icons } = option
-    if (!prefix || !icons)
+    if (!prefix || !icons || !icons.endsWith('.svg'))
       return
 
     const iconsMap = new Map<string, IconifyMeta['icons'][string]>()
-
-    if (!icons.endsWith('.svg'))
-      return
 
     const paths = await fg.glob(icons, { cwd: base }).then(relatives => relatives.map(relative => resolve(base, relative)))
 
@@ -32,12 +36,7 @@ export async function normalizeIcons<T extends IconsData = IconsData>(options: T
 
       const svg = await fs.readFile(path, 'utf-8')
 
-      /**
-       * 1. width
-       * 2. height
-       * 3. body
-       */
-      const match = svg.match(/<svg[^>]*?viewBox="\s*\d+\s+\d+\s+(\d+)\s+(\d+)\s*"[^>]*>(.*?)<\/svg>/s)
+      const match = svg.match(SVG_REGEX)
       if (!match)
         return
 
