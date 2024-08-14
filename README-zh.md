@@ -41,7 +41,7 @@ export default defineConfig({
 
 根据上述配置，假设你有图标 `bar.svg` ，将其放入 `./src/icons/`:
 
-- 在**项目启动时**，默认在 `<root>/icons-meta` 文件夹内生成 iconify 格式的json。
+- 在**项目启动时**，默认在 `<root>/node_modules/.unplugin-iconify-generator` 文件夹内生成 iconify 格式的json。
 - 在代码中输入 `i-foo-bar` 可以获得相应的代码联想与图标缩略图，其中`foo`为配置中的前缀，`bar`为图标名称。更多DX相关的特性请参见 `antfu.iconify` 文档。
 
 更多详细选项与配置，请见下文 *选项* 章节。
@@ -92,7 +92,7 @@ export default defineConfig({
 
 - `prefix`: 一个字符串，作为图标集的前缀，如 `i-foo-bar` 中，`foo`是前缀，`bar`是svg名称。
 - `icons`: 一个 [glob](https://github.com/mrmlnc/fast-glob) 路径字符串，用于指示哪些图标会被收录进此图标集内。顺带一提，在这里使用`.svg`以外的文件类型是无意义的。
-- `output`: 一个路径字符串，用来指示该图标集的 iconify 格式json文件生成在什么地方。默认为根目录下的 `icons-meta` 文件夹。
+- `output`: 一个路径字符串，用来指示该图标集的 iconify 格式json文件生成在什么地方。默认为根目录下的 `node_modules/.unplugin-iconify-generator` 文件夹。
 
 ### 插件配置项：
 

@@ -29,7 +29,7 @@ export interface IconsData {
 export interface IconsPluginData extends IconsData {
   /**
    * Indicates the output path of the iconify meta file.
-   * @default './icons-meta'
+   * @default './node_modules/.unplugin-iconify-generator'
    */
   output?: string
 }

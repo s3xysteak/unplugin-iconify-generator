@@ -41,7 +41,7 @@ export default defineConfig({
 
 According to the config above, assume that you have a icon `bar.svg`, put it into `./src/icons/`:
 
-- While **boot of project**, generate iconify format json in `<root>/icons-meta` as default.
+- While **boot of project**, generate iconify format json in `<root>/node_modules/.unplugin-iconify-generator` as default.
 - Type in `i-foo-bar` could have intelliSense and mini icon, which `foo` is the prefix, `bar` is the name of icon. More features about DX please refer to the document of `antfu.iconify`.
 
 More details and options, please refer to the *Options* chapter below.
@@ -92,7 +92,7 @@ Icon set configuration options and plugin configuration options can be used toge
 
 - `prefix`: A string which is the prefix of icons collection. For example in `i-my-icon`, `my` is the prefix and `icon` is the name of icon.
 - `icons`: A string about [glob](https://github.com/mrmlnc/fast-glob) path, used to indicate which icons will be collected into the collection. By the way it is meaningless to use file types except `.svg`.
-- `output`: A string about path, indicated where the iconify format json will be generated. In default is the `icons-meta` folder at the root.
+- `output`: A string about path, indicated where the iconify format json will be generated. In default is the `node_modules/.unplugin-iconify-generator` folder at the root.
 
 ### Plugin configuration
 

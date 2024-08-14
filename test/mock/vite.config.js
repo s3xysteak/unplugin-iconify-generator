@@ -15,7 +15,6 @@ export default defineConfig({
       {
         prefix: 'hi',
         icons: './test/mock/src/icons/*.svg',
-        output: './test/mock/icons-meta',
       },
       {
         base: fileURLToPath(new URL('../../', import.meta.url)),

@@ -25,7 +25,7 @@ export default createUnplugin<PluginOptions | PluginOptions[] | undefined>((_opt
 
       const outputPath: string[] = []
       for (const [k, v] of map.entries()) {
-        const path = resolve(base, v.info.output ?? './icons-meta', `${k}.json`)
+        const path = resolve(base, v.info.output ?? './node_modules/.unplugin-iconify-generator', `${k}.json`)
         await fs.outputFile(path, JSON.stringify(v.meta))
         outputPath.push(path)
       }
