@@ -1,7 +1,8 @@
 import { basename, extname, resolve } from 'pathe'
-import fg from 'fast-glob'
+import { glob } from 'tinyglobby'
 import fs from 'fs-extra'
 import type { IconifyMeta, IconsData } from './types'
+import { toArray } from './utils'
 
 /**
  * 1. width
@@ -22,12 +23,13 @@ export async function normalizeIcons<T extends IconsData = IconsData>(options: T
       return
 
     const { prefix, icons } = option
-    if (!prefix || !icons || !icons.endsWith('.svg'))
+    if (!prefix || !icons)
       return
 
     const iconsMap = new Map<string, IconifyMeta['icons'][string]>()
 
-    const paths = await fg.glob(icons, { cwd: base }).then(relatives => relatives.map(relative => resolve(base, relative)))
+    const paths = await glob(toArray(icons), { cwd: base })
+      .then(relatives => relatives.map(relative => resolve(base, relative)))
 
     await Promise.all(paths.map(async (path) => {
       const name = path.split('/').at(-1)

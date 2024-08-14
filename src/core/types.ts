@@ -23,7 +23,7 @@ export interface IconsData {
    * @example
    * './src/assets/svg/*.svg'
    */
-  icons?: string
+  icons?: string | string[]
 }
 
 export interface IconsPluginData extends IconsData {
