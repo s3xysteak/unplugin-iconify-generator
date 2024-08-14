@@ -30,7 +30,7 @@ export default defineConfig({
   plugins: [
     Iconify({
       prefix: 'foo',
-      icons: './src/icons/*.svg',
+      icons: './src/icons',
 
       /** enable `antfu.iconify` support */
       iconifyIntelliSense: true,
@@ -67,11 +67,11 @@ export default defineConfig({
     Iconify([
       {
         prefix: 'foo',
-        icons: './src/icons/foo/*.svg',
+        icons: './src/icons/foo',
       },
       {
         prefix: 'bar',
-        icons: './src/icons/bar/*.svg'
+        icons: './src/icons/bar'
       },
       {
         iconifyIntelliSense: true
@@ -91,7 +91,7 @@ export default defineConfig({
 ### 图标集配置项：
 
 - `prefix`: 一个字符串，作为图标集的前缀，如 `i-foo-bar` 中，`foo`是前缀，`bar`是svg名称。
-- `icons`: 一个 [glob](https://github.com/mrmlnc/fast-glob) 路径字符串，用于指示哪些图标会被收录进此图标集内。顺带一提，在这里使用`.svg`以外的文件类型是无意义的。
+- `icons`: 一个路径字符串或路径字符串数组，指向文件夹，该文件夹下所有.svg图标会被收录进此图标集合内。
 - `output`: 一个路径字符串，用来指示该图标集的 iconify 格式json文件生成在什么地方。默认为根目录下的 `node_modules/.unplugin-iconify-generator` 文件夹。
 
 ### 插件配置项：

@@ -30,7 +30,7 @@ export default defineConfig({
   plugins: [
     Iconify({
       prefix: 'foo',
-      icons: './src/icons/*.svg',
+      icons: './src/icons',
 
       /** enable `antfu.iconify` support */
       iconifyIntelliSense: true,
@@ -67,11 +67,11 @@ export default defineConfig({
     Iconify([
       {
         prefix: 'foo',
-        icons: './src/icons/foo/*.svg',
+        icons: './src/icons/foo',
       },
       {
         prefix: 'bar',
-        icons: './src/icons/bar/*.svg'
+        icons: './src/icons/bar'
       },
       {
         iconifyIntelliSense: true
@@ -91,7 +91,7 @@ Icon set configuration options and plugin configuration options can be used toge
 ### Icons collection configuration
 
 - `prefix`: A string which is the prefix of icons collection. For example in `i-my-icon`, `my` is the prefix and `icon` is the name of icon.
-- `icons`: A string about [glob](https://github.com/mrmlnc/fast-glob) path, used to indicate which icons will be collected into the collection. By the way it is meaningless to use file types except `.svg`.
+- `icons`: A string about path or path string array, indicated to a folder, all the .svg icons in the folder will be collected to the icons collection.
 - `output`: A string about path, indicated where the iconify format json will be generated. In default is the `node_modules/.unplugin-iconify-generator` folder at the root.
 
 ### Plugin configuration

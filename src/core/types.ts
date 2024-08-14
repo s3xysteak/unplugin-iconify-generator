@@ -19,9 +19,9 @@ export interface IconsData {
   prefix?: string
 
   /**
-   * glob
+   * Icons in the specified directory will be generated.
    * @example
-   * './src/assets/svg/*.svg'
+   * './src/assets/icons'
    */
   icons?: string | string[]
 }

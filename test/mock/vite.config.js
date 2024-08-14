@@ -14,7 +14,7 @@ export default defineConfig({
     Iconify([
       {
         prefix: 'hi',
-        icons: './test/mock/src/icons/*.svg',
+        icons: './test/mock/src/icons',
       },
       {
         base: fileURLToPath(new URL('../../', import.meta.url)),
