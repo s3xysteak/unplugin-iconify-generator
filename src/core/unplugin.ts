@@ -6,27 +6,25 @@ import type { PluginOptions, VscodeSetting } from './types'
 
 import { normalizeIcons } from './parser'
 
-export default createUnplugin<PluginOptions | PluginOptions[] | undefined>((_options = {}) => {
-  const options = Array.isArray(_options) ? _options : [_options]
-
-  const opt: PluginOptions = Object.assign(...options as [any])
+export default createUnplugin<PluginOptions | undefined>((options = {}) => {
   const {
     base = process.cwd(),
     iconifyIntelliSense = false,
-  } = opt
+    output = './node_modules/.unplugin-iconify-generator',
+  } = options
 
   return {
     name: 'unplugin-iconify-generator',
     async buildStart() {
-      const map = await normalizeIcons(options, base)
+      const list = await normalizeIcons(options, base)
 
-      if (map.size === 0)
+      if (!list)
         return
 
       const outputPath: string[] = []
-      for (const [k, v] of map.entries()) {
-        const path = resolve(base, v.info.output ?? './node_modules/.unplugin-iconify-generator', `${k}.json`)
-        await fs.outputFile(path, JSON.stringify(v.meta))
+      for (const { prefix, icons } of list) {
+        const path = resolve(base, output, `${prefix}.json`)
+        await fs.outputFile(path, JSON.stringify({ prefix, icons }))
         outputPath.push(path)
       }
 

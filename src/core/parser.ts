@@ -1,58 +1,44 @@
 import { basename, extname, join, resolve } from 'pathe'
 import { glob } from 'tinyglobby'
 import fs from 'fs-extra'
-import type { IconifyIcon, IconifyJSONIconsData, IconifyMeta, IconsData } from './types'
-import { notNullish, objectMap, toArray } from './utils'
+import type { IconifyIcon, IconifyJSONIconsData, PluginOptions } from './types'
+import { notNullish, objectMap } from './utils'
 
-export async function normalizeIcons<T extends IconsData = IconsData>(options: T[], base: string) {
-  /** key is prefix */
-  const map = new Map<string, {
-    meta: IconifyMeta
-    info: T
-  }>()
+export async function normalizeIcons(options: PluginOptions, base: string): Promise<IconifyJSONIconsData[] | false> {
+  return options.collections && Object.keys(options.collections).length > 0
+    ? await Promise.all(
+      Object.entries(options.collections).map(async ([prefix, path]) => {
+        const paths = await glob([join(path, '*.svg')], { cwd: base })
+          .then(relatives => relatives.map(relative => resolve(base, relative)))
 
-  await Promise.all(options.map(async (option) => {
-    if (!option)
-      return
+        const icons = Object.fromEntries(
+          await Promise.all(
+            paths.map(async (path) => {
+              const name = path.split('/').at(-1)
+              if (!name)
+                return
 
-    const { prefix, icons } = option
-    if (!prefix || !icons)
-      return
+              const svg = await fs.readFile(path, 'utf-8')
 
-    const paths = await glob(toArray(icons).map(p => join(p, '*.svg')), { cwd: base })
-      .then(relatives => relatives.map(relative => resolve(base, relative)))
+              const iconifyIcon = parseIcon(svg)
+              if (!iconifyIcon)
+                return
 
-    const _icons = Object.fromEntries(
-      await Promise.all(
-        paths.map(async (path) => {
-          const name = path.split('/').at(-1)
-          if (!name)
-            return
+              return [
+                basename(name, extname(name)),
+                iconifyIcon,
+              ] as const
+            }),
+          ).then(v => v.filter(notNullish)),
+        )
 
-          const svg = await fs.readFile(path, 'utf-8')
-
-          const val = parseIcon(svg)
-          if (!val)
-            return
-
-          return [
-            basename(name, extname(name)),
-            val,
-          ] as const
-        }),
-      ).then(v => v.filter(notNullish)),
+        return {
+          prefix,
+          icons,
+        }
+      }),
     )
-
-    map.set(prefix, {
-      meta: {
-        prefix,
-        icons: _icons,
-      },
-      info: option,
-    })
-  }))
-
-  return map
+    : false
 }
 
 /**

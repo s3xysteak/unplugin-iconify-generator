@@ -91,6 +91,7 @@
   },
   "scripts": {
     "dev": "pnpm build:only && pnpm --filter {./test/mock} i && pnpm --filter {./test/mock} dev",
+    "dev:only": "pnpm --filter {./test/mock} dev",
     "build": "tsc && unbuild",
     "build:only": "unbuild",
     "test": "vitest",

@@ -11,16 +11,13 @@ export default defineConfig({
   plugins: [
     vue(),
     UnoCSS(),
-    Iconify([
-      {
-        prefix: 'hi',
-        icons: './test/mock/src/icons',
+    Iconify({
+      collections: {
+        hi: './test/mock/src/icons',
       },
-      {
-        base: fileURLToPath(new URL('../../', import.meta.url)),
-        iconifyIntelliSense: true,
-      },
-    ]),
+      base: fileURLToPath(new URL('../../', import.meta.url)),
+      iconifyIntelliSense: true,
+    }),
   ],
   resolve: {
     alias: {
