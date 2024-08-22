@@ -2,7 +2,7 @@ export interface PluginOptions {
   /**
    * Support `Iconify IntelliSense`. ! The options will change your `.vscode/settings.json`.
    * Use string to specify the path of the settings.json file.
-   * @default false
+   * @default true
    */
   iconifyIntelliSense?: boolean | string
 

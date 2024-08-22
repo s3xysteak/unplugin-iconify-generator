@@ -9,7 +9,7 @@ import { normalizeIcons } from './parser'
 export default createUnplugin<PluginOptions | undefined>((options = {}) => {
   const {
     base = process.cwd(),
-    iconifyIntelliSense = false,
+    iconifyIntelliSense = true,
     output = './node_modules/.unplugin-iconify-generator',
   } = options
 
