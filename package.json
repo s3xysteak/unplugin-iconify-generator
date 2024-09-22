@@ -1,7 +1,7 @@
 {
   "name": "unplugin-iconify-generator",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": false,
   "description": "Automatically generate iconify format json, support Iconify Intellisense",
   "author": "s3xysteak",
