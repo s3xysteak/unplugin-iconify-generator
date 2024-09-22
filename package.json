@@ -96,7 +96,7 @@
     "build:only": "unbuild",
     "test": "vitest",
     "test:once": "vitest run",
-    "release": "tsc && esno ./scripts/release.ts",
+    "release": "tsc && bumpp",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -110,6 +110,7 @@
     "@antfu/eslint-config": "^2.24.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.1.0",
+    "bumpp": "^9.5.2",
     "eslint": "^9.8.0",
     "esno": "^4.7.0",
     "typescript": "^5.5.4",
