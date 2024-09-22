@@ -2,9 +2,10 @@ import process from 'node:process'
 import { relative, resolve } from 'pathe'
 import fs from 'fs-extra'
 import { createUnplugin } from 'unplugin'
-import type { PluginOptions, VscodeSetting } from './types'
+import type { PluginOptions } from './types'
 
 import { normalizeIcons } from './parser'
+import { injectJsonc } from './jsonc'
 
 export default createUnplugin<PluginOptions | undefined>((options = {}) => {
   const {
@@ -35,11 +36,10 @@ export default createUnplugin<PluginOptions | undefined>((options = {}) => {
           : resolve(base, './.vscode/settings.json')
 
         await fs.ensureFile(settingPath)
-        const setting: VscodeSetting = await fs.readFile(settingPath, 'utf-8')
-          .then(val => val === '' ? {} : JSON.parse(val))
+        const settingText = await fs.readFile(settingPath, 'utf-8')
+        const result = outputPath.map(absolute => relative(base, absolute))
 
-        setting['iconify.customCollectionJsonPaths'] = outputPath.map(absolute => relative(base, absolute))
-        await fs.outputFile(settingPath, `${JSON.stringify(setting, null, 2)}\n`)
+        await fs.outputFile(settingPath, injectJsonc(settingText, 'iconify.customCollectionJsonPaths', result))
       }
     },
   }

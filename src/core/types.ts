@@ -28,11 +28,6 @@ export interface PluginOptions {
   output?: string
 }
 
-export interface VscodeSetting {
-  'iconify.customCollectionJsonPaths': string []
-  [k: string]: any
-}
-
 export interface IconifyIcon {
   body: string
 

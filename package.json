@@ -90,8 +90,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "dev": "pnpm build:only && pnpm --filter {./test/mock} i && pnpm --filter {./test/mock} dev",
-    "dev:only": "pnpm --filter {./test/mock} dev",
+    "dev": "unbuild --stub && pnpm i",
     "build": "tsc && unbuild",
     "build:only": "unbuild",
     "test": "vitest",
@@ -102,6 +101,7 @@
   },
   "dependencies": {
     "fs-extra": "^11.2.0",
+    "jsonc-parser": "^3.3.1",
     "pathe": "^1.1.2",
     "tinyglobby": "^0.2.2",
     "unplugin": "^1.12.0"
