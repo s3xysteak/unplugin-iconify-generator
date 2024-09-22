@@ -4,6 +4,4 @@ export default antfu({
   rules: {
     'no-console': 'off',
   },
-}, {
-  ignores: ['test/mock/icons-meta/*.json'],
 })

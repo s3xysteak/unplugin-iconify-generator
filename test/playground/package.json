@@ -1,5 +1,5 @@
 {
-  "name": "mock",
+  "name": "pg",
   "type": "module",
   "version": "0.0.0",
   "private": true,

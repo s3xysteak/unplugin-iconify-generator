@@ -13,7 +13,7 @@ export default defineConfig({
     UnoCSS(),
     Iconify({
       collections: {
-        hi: './test/mock/src/icons',
+        hi: './test/playground/src/icons',
       },
       base: fileURLToPath(new URL('../../', import.meta.url)),
       iconifyIntelliSense: true,
