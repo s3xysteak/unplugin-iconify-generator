@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.3.0",
   "private": false,
+  "packageManager": "pnpm@9.11.0",
   "description": "Automatically generate iconify format json, support Iconify Intellisense",
   "author": "s3xysteak",
   "license": "MIT",
@@ -96,6 +97,7 @@
     "test": "vitest",
     "test:once": "vitest run",
     "release": "tsc && bumpp",
+    "publish:ci": "pnpm publish --access public --no-git-checks",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
