@@ -1,4 +1,7 @@
 import process from 'node:process'
+import { debounce } from 'perfect-debounce'
+import type { FSWatcher } from 'chokidar'
+import chokidar from 'chokidar'
 import { isAbsolute, join, relative, resolve } from 'pathe'
 import fs from 'fs-extra'
 import { createUnplugin } from 'unplugin'
@@ -15,15 +18,7 @@ export default createUnplugin<PluginOptions | undefined>((options = {}) => {
     collections,
   } = options
 
-  const pathList = Object.values(collections ?? {}).map(p => isAbsolute(p) ? p : join(base, p))
-
-  let filesCount = 0
-  const getFilesCount = () =>
-    pathList
-      .map(p => fs.readdirSync(p))
-      .reduce((acc, val) => acc + val.length, filesCount)
-
-  async function run() {
+  const run = debounce(async () => {
     const list = await normalizeIcons(options, base)
 
     if (!list)
@@ -48,22 +43,31 @@ export default createUnplugin<PluginOptions | undefined>((options = {}) => {
 
       await fs.outputFile(settingPath, injectJsonc(settingText, 'iconify.customCollectionJsonPaths', result))
     }
+  }, 100)
+
+  const watchCb = async (path: string) => {
+    if (path.endsWith('.svg'))
+      await run()
   }
+
+  let watcher: FSWatcher
 
   return {
     name: 'unplugin-iconify-generator',
-    async buildStart() {
-      await run()
-      filesCount = getFilesCount()
-    },
-    vite: {
-      async handleHotUpdate() {
-        const filesCountBefore = filesCount
-        filesCount = getFilesCount()
+    buildStart() {
+      const pathList = Object.values(collections ?? {}).map(p => isAbsolute(p) ? p : join(base, p))
 
-        if (filesCountBefore !== filesCount)
-          await run()
-      },
+      watcher = chokidar
+        .watch(pathList, {
+          cwd: base,
+          persistent: true,
+        })
+        .on('add', watchCb)
+        .on('change', watchCb)
+        .on('unlink', watchCb)
+    },
+    buildEnd() {
+      return watcher.close()
     },
   }
 })
