@@ -91,7 +91,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "dev": "unbuild --stub && pnpm i",
+    "dev": "unbuild --stub",
     "build": "tsc && unbuild",
     "build:only": "unbuild",
     "test": "vitest",
