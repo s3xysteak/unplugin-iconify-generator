@@ -42,6 +42,17 @@ export default defineConfig({
 
 更多详细选项与配置，请见下文 *选项* 章节。
 
+### 规范化svg图标集
+
+通过 `/core` 导出核心功能：
+
+```ts
+import { type IconifyIcon, parseIcon } from 'unplugin-iconify-generator/core'
+// ...
+```
+
+详见 [源代码](/src/core)
+
 ## :wrench: 选项
 
 - `iconifyIntelliSense`: 一个布尔值，用于指示是否要开启对 `antfu.iconify` 扩展的支持。注意，开启后会对 `.vscode/settings.json` 进行修改。默认值: `true`。

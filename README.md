@@ -42,6 +42,17 @@ According to the config above, assume that you have a icon `bar.svg`, put it int
 
 More details and options, please refer to the *Options* chapter below.
 
+### Normalize svg icons collection
+
+Export core function by `/core`:
+
+```ts
+import { type IconifyIcon, parseIcon } from 'unplugin-iconify-generator/core'
+// ...
+```
+
+For more details plz refer to [source](/src/core)
+
 ## :wrench: Options
 
 - `iconifyIntelliSense`: A boolean value indicating whether to enable support for the `antfu.iconify` extension. Note that enabling this will modify `.vscode/settings.json`. Default: `true`.
