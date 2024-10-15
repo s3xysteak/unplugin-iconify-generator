@@ -1,14 +1,14 @@
-import process from 'node:process'
-import { debounce } from 'perfect-debounce'
 import type { FSWatcher } from 'chokidar'
-import chokidar from 'chokidar'
-import { isAbsolute, join, relative, resolve } from 'pathe'
-import fs from 'fs-extra'
-import { createUnplugin } from 'unplugin'
 import type { PluginOptions } from './types'
+import process from 'node:process'
+import chokidar from 'chokidar'
+import fs from 'fs-extra'
+import { isAbsolute, join, relative, resolve } from 'pathe'
+import { debounce } from 'perfect-debounce'
+import { createUnplugin } from 'unplugin'
 
-import { normalizeIcons } from './parser'
 import { injectJsonc } from './jsonc'
+import { normalizeIcons } from './parser'
 
 export default createUnplugin<PluginOptions | undefined>((options = {}) => {
   const {

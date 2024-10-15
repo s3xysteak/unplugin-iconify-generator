@@ -19,9 +19,9 @@ First please install the Vscode extension `antfu.iconify`.
 Thanks to `unplugin`, `unplugin-iconify-generator` offers synchronized support for [multiple bundlers](https://unplugin.unjs.io/guide/). For example, with Vite:
 
 ```js
-import { defineConfig } from 'vite'
-
 import Iconify from 'unplugin-iconify-generator/vite'
+
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [

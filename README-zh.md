@@ -19,9 +19,9 @@ pnpm i -D unplugin-iconify-generator
 得益于 `unplugin`，`unplugin-iconify-generator` 提供了对[多个打包工具](https://unplugin.unjs.io/guide/)的同步支持，以 Vite 为例：
 
 ```js
-import { defineConfig } from 'vite'
-
 import Iconify from 'unplugin-iconify-generator/vite'
+
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [

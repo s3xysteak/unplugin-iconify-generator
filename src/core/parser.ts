@@ -1,7 +1,7 @@
+import type { IconifyIcon, IconifyJSONIconsData, PluginOptions } from './types'
+import fs from 'fs-extra'
 import { basename, extname, join, resolve } from 'pathe'
 import { glob } from 'tinyglobby'
-import fs from 'fs-extra'
-import type { IconifyIcon, IconifyJSONIconsData, PluginOptions } from './types'
 import { notNullish, objectMap } from './utils'
 
 export async function normalizeIcons(options: PluginOptions, base: string): Promise<IconifyJSONIconsData[] | false> {
