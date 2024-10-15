@@ -66,8 +66,8 @@ export default createUnplugin<PluginOptions | undefined>((options = {}) => {
         .on('change', watchCb)
         .on('unlink', watchCb)
     },
-    buildEnd() {
-      return watcher.close()
+    async buildEnd() {
+      await watcher.close()
     },
   }
 })
