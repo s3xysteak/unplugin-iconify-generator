@@ -2,7 +2,7 @@
 
 English | [简体中文](./README-zh.md)
 
-Provide DX support for custom icon libraries based on the Vscode extension `antfu.iconify`.
+Provide DX support for custom icon collections based on the Vscode extension `antfu.iconify`.
 
 ## :memo: Usage
 
@@ -51,7 +51,7 @@ import { type IconifyIcon, parseIcon } from 'unplugin-iconify-generator/core'
 // ...
 ```
 
-For more details plz refer to [source](/src/core)
+For more details plz refer to [source code](/src/core).
 
 ## :wrench: Options
 
