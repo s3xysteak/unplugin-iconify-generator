@@ -30,16 +30,6 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./core": {
-      "import": {
-        "types": "./dist/core.d.mts",
-        "default": "./dist/core.mjs"
-      },
-      "require": {
-        "types": "./dist/core.d.cts",
-        "default": "./dist/core.cjs"
-      }
-    },
     "./vite": {
       "import": {
         "types": "./dist/vite.d.mts",
@@ -122,14 +112,11 @@
   },
   "scripts": {
     "dev": "unbuild --stub",
-    "build": "tsc && unbuild",
-    "build:only": "unbuild",
+    "build": "unbuild",
     "test": "vitest",
-    "test:once": "vitest run",
     "release": "tsc && bumpp",
     "publish:ci": "pnpm publish --access public --no-git-checks",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "eslint ."
   },
   "dependencies": {
     "chokidar": "^4.0.1",
