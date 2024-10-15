@@ -9,7 +9,7 @@ export interface PluginOptions {
   /**
    * @default process.cwd()
    */
-  base?: string
+  cwd?: string
 
   /**
    * A key-value pair of icons collection names and the path of icons' folder.

@@ -15,7 +15,7 @@ export default defineConfig({
       collections: {
         hi: './test/playground/src/icons',
       },
-      base: fileURLToPath(new URL('../../', import.meta.url)),
+      cwd: fileURLToPath(new URL('../../', import.meta.url)),
       iconifyIntelliSense: true,
     }),
   ],

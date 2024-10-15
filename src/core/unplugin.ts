@@ -12,21 +12,21 @@ import { normalizeIcons } from './parser'
 
 export default createUnplugin<PluginOptions | undefined>((options = {}) => {
   const {
-    base = process.cwd(),
+    cwd = process.cwd(),
     iconifyIntelliSense = true,
     output = './node_modules/.unplugin-iconify-generator',
     collections,
   } = options
 
   const run = debounce(async () => {
-    const list = await normalizeIcons(options, base)
+    const list = await normalizeIcons(options, cwd)
 
     if (!list)
       return
 
     const outputPath: string[] = []
     for (const { prefix, icons } of list) {
-      const path = resolve(base, output, `${prefix}.json`)
+      const path = resolve(cwd, output, `${prefix}.json`)
       await fs.outputFile(path, JSON.stringify({ prefix, icons }))
       outputPath.push(path)
     }
@@ -35,11 +35,11 @@ export default createUnplugin<PluginOptions | undefined>((options = {}) => {
     if (iconifyIntelliSense) {
       const settingPath = typeof iconifyIntelliSense === 'string'
         ? iconifyIntelliSense
-        : resolve(base, './.vscode/settings.json')
+        : resolve(cwd, './.vscode/settings.json')
 
       await fs.ensureFile(settingPath)
       const settingText = await fs.readFile(settingPath, 'utf-8')
-      const result = outputPath.map(absolute => relative(base, absolute))
+      const result = outputPath.map(absolute => relative(cwd, absolute))
 
       await fs.outputFile(settingPath, injectJsonc(settingText, 'iconify.customCollectionJsonPaths', result))
     }
@@ -55,11 +55,11 @@ export default createUnplugin<PluginOptions | undefined>((options = {}) => {
   return {
     name: 'unplugin-iconify-generator',
     buildStart() {
-      const pathList = Object.values(collections ?? {}).map(p => isAbsolute(p) ? p : join(base, p))
+      const pathList = Object.values(collections ?? {}).map(p => isAbsolute(p) ? p : join(cwd, p))
 
       watcher = chokidar
         .watch(pathList, {
-          cwd: base,
+          cwd,
           persistent: true,
         })
         .on('add', watchCb)

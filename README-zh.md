@@ -56,7 +56,7 @@ import { type IconifyIcon, parseIcon } from 'unplugin-iconify-generator/core'
 ## :wrench: 选项
 
 - `iconifyIntelliSense`: 一个布尔值，用于指示是否要开启对 `antfu.iconify` 扩展的支持。注意，开启后会对 `.vscode/settings.json` 进行修改。默认值: `true`。
-- `base`: 一个绝对路径字符串，用于指示根路径，这会作为其他选项的基本路径使用。默认值: `process.cwd()`。
+- `cwd`: 一个绝对路径字符串，用于指示根路径，这会作为其他选项的基本路径使用。默认值: `process.cwd()`。
 - `output`: 一个路径字符串，用于存放生成的元信息。默认值: `'./node_modules/.unplugin-iconify-generator'`。
 - `collections`: 一个必填的对象，键名为一个表示图标集前缀的字符串，键值为指向一个文件夹的路径字符串，该文件夹下所有`.svg`文件将被认为是属于该图标集的图标。
 

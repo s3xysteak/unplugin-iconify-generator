@@ -56,7 +56,7 @@ For more details plz refer to [source code](/src/core).
 ## :wrench: Options
 
 - `iconifyIntelliSense`: A boolean value indicating whether to enable support for the `antfu.iconify` extension. Note that enabling this will modify `.vscode/settings.json`. Default: `true`.
-- `base`: An absolute path string specifying the root path, which will be used as the base path for other options. Default: `process.cwd()`.
+- `cwd`: An absolute path string specifying the root path, which will be used as the base path for other options. Default: `process.cwd()`.
 - `output`: A path string indicating where the generated metadata will be stored. Default: `'./node_modules/.unplugin-iconify-generator'`.
 - `collections`: A required object where the key is a string representing the icon set prefix, and the value is a path string pointing to a folder. All `.svg` files within that folder will be considered as icons belonging to the specified icon set.
 

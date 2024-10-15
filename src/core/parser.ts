@@ -4,12 +4,12 @@ import { basename, extname, join, resolve } from 'pathe'
 import { glob } from 'tinyglobby'
 import { notNullish, objectMap } from './utils'
 
-export async function normalizeIcons(options: PluginOptions, base: string): Promise<IconifyJSONIconsData[] | false> {
+export async function normalizeIcons(options: PluginOptions, cwd: string): Promise<IconifyJSONIconsData[] | false> {
   return options.collections && Object.keys(options.collections).length > 0
     ? await Promise.all(
       Object.entries(options.collections).map(async ([prefix, path]) => {
-        const paths = await glob([join(path, '*.svg')], { cwd: base })
-          .then(relatives => relatives.map(relative => resolve(base, relative)))
+        const paths = await glob([join(path, '*.svg')], { cwd })
+          .then(relatives => relatives.map(relative => resolve(cwd, relative)))
 
         const icons = Object.fromEntries(
           await Promise.all(
