@@ -1,11 +1,12 @@
 import * as jsonc from 'jsonc-parser'
+import { toArray } from './utils'
 
-export function injectJsonc(jsonText: string, key: string, newValue: any, flat = true) {
+export function injectJsonc(jsonText: string, key: string | jsonc.JSONPath, newValue: any) {
   const { insertSpaces, tabSize } = detectIndentation(jsonText)
 
   const edits = jsonc.modify(
     jsonText,
-    flat ? [key] : key.split('.'),
+    toArray(key),
     newValue,
     { formattingOptions: { insertSpaces, tabSize } },
   )
