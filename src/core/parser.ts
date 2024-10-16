@@ -8,41 +8,41 @@ import { filename } from 'pathe/utils'
 import { glob } from 'tinyglobby'
 import { notNullish } from './utils'
 
-export async function normalizeIcons(options: PluginOptions, cwd: string): Promise<IconifyJSONIconsData[] | false> {
-  return options.collections && Object.keys(options.collections).length > 0
-    ? await Promise.all(
-      Object.entries(options.collections).map(async ([prefix, path]) => {
-        const paths = await glob([join(path, '*.svg')], { cwd })
-          .then(relatives => relatives.map(relative => resolve(cwd, relative)))
+export async function normalizeIcon(
+  options: PluginOptions,
+  prefix: string,
+  path: string,
+): Promise<IconifyJSONIconsData> {
+  const { cwd } = options
 
-        const icons = Object.fromEntries(
-          await Promise.all(
-            paths.map(async (path) => {
-              const name = path.split('/').at(-1)
-              if (!name)
-                return
+  const paths = await glob([join(path, '*.svg')], { cwd })
+    .then(relatives => relatives.map(relative => resolve(cwd, relative)))
 
-              const svg = await fs.readFile(path, 'utf-8')
+  const icons = Object.fromEntries(
+    await Promise.all(
+      paths.map(async (path) => {
+        const name = path.split('/').at(-1)
+        if (!name)
+          return
 
-              const iconifyIcon = parseIcon(svg)
-              if (!iconifyIcon)
-                return
+        const svg = await fs.readFile(path, 'utf-8')
 
-              return [
-                filename(name),
-                iconifyIcon,
-              ] as const
-            }),
-          ).then(v => v.filter(notNullish)),
-        )
+        const iconifyIcon = parseIcon(svg)
+        if (!iconifyIcon)
+          return
 
-        return {
-          prefix,
-          icons,
-        }
+        return [
+          filename(name),
+          iconifyIcon,
+        ] as const
       }),
-    )
-    : false
+    ).then(v => v.filter(notNullish)),
+  )
+
+  return {
+    prefix,
+    icons,
+  }
 }
 
 export function parseIcon(svg: string): IconifyIcon | undefined {

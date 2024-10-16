@@ -8,7 +8,7 @@ import { debounce } from 'perfect-debounce'
 import { createUnplugin } from 'unplugin'
 
 import { injectJsonc } from './jsonc'
-import { normalizeIcons } from './parser'
+import { normalizeIcon } from './parser'
 
 function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptions {
   const defaultOptions: PluginOptions = {
@@ -28,17 +28,17 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
   const opts = resolveOptions(userOptions)
 
   const run = debounce(async () => {
-    const list = await normalizeIcons(opts, opts.cwd)
-
-    if (!list)
-      return
-
-    const outputPath: string[] = []
-    for (const { prefix, icons } of list) {
-      const path = resolve(opts.cwd, opts.output, `${prefix}.json`)
-      await fs.outputFile(path, JSON.stringify({ prefix, icons }))
-      outputPath.push(path)
-    }
+    const icons = await Promise.all(
+      Object.entries(opts.collections)
+        .map(([prefix, path]) => normalizeIcon(opts, prefix, path)),
+    )
+    const outputPaths = await Promise.all(
+      icons.map(async ({ prefix, icons }) => {
+        const path = resolve(opts.cwd, opts.output, `${prefix}.json`)
+        await fs.outputFile(path, JSON.stringify({ prefix, icons }))
+        return path
+      }),
+    )
 
     // vscode setting
     if (opts.iconifyIntelliSense) {
@@ -48,7 +48,7 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
 
       await fs.ensureFile(settingPath)
       const settingText = await fs.readFile(settingPath, 'utf-8')
-      const result = outputPath.map(absolute => relative(opts.cwd, absolute))
+      const result = outputPaths.map(absolute => relative(opts.cwd, absolute))
 
       await fs.outputFile(settingPath, injectJsonc(settingText, 'iconify.customCollectionJsonPaths', result))
     }
