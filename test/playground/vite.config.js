@@ -13,12 +13,16 @@ export default defineConfig({
     UnoCSS(),
     Iconify({
       collections: {
-        hi: './test/playground/src/icons',
+        hi: r('./src/icons'),
       },
-      cwd: fileURLToPath(new URL('../../', import.meta.url)),
+      cwd: r('../../'),
     }),
   ],
   server: {
     host: '0.0.0.0',
   },
 })
+
+function r(path) {
+  return fileURLToPath(new URL(path, import.meta.url))
+}
