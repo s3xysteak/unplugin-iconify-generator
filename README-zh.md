@@ -44,14 +44,12 @@ export default defineConfig({
 
 ### 规范化svg图标集
 
-通过 `/core` 导出核心功能：
+详见 [源代码](/src/core)
 
 ```ts
-import { type IconifyIcon, parseIcon } from 'unplugin-iconify-generator/core'
+import { type IconifyIcon, parseIcon } from 'unplugin-iconify-generator'
 // ...
 ```
-
-详见 [源代码](/src/core)
 
 ## :wrench: 选项
 

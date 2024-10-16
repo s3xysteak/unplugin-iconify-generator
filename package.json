@@ -1,7 +1,7 @@
 {
   "name": "unplugin-iconify-generator",
   "type": "module",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": false,
   "packageManager": "pnpm@9.11.0",
   "description": "Automatically generate iconify format json, support Iconify Intellisense",
@@ -28,16 +28,6 @@
       "require": {
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
-      }
-    },
-    "./core": {
-      "import": {
-        "types": "./dist/core.d.mts",
-        "default": "./dist/core.mjs"
-      },
-      "require": {
-        "types": "./dist/core.d.cts",
-        "default": "./dist/core.cjs"
       }
     },
     "./vite": {
@@ -122,14 +112,11 @@
   },
   "scripts": {
     "dev": "unbuild --stub",
-    "build": "tsc && unbuild",
-    "build:only": "unbuild",
+    "build": "unbuild",
     "test": "vitest",
-    "test:once": "vitest run",
     "release": "tsc && bumpp",
     "publish:ci": "pnpm publish --access public --no-git-checks",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "eslint ."
   },
   "dependencies": {
     "chokidar": "^4.0.1",

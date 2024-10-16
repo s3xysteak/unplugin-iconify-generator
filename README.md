@@ -44,14 +44,12 @@ More details and options, please refer to the *Options* chapter below.
 
 ### Normalize svg icons collection
 
-Export core function by `/core`:
+For more details plz refer to [source code](/src/core).
 
 ```ts
-import { type IconifyIcon, parseIcon } from 'unplugin-iconify-generator/core'
+import { type IconifyIcon, parseIcon } from 'unplugin-iconify-generator'
 // ...
 ```
-
-For more details plz refer to [source code](/src/core).
 
 ## :wrench: Options
 
