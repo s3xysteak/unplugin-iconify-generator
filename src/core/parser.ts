@@ -1,8 +1,12 @@
-import type { IconifyIcon, IconifyJSONIconsData, PluginOptions } from './types'
+import type { IconifyIcon, IconifyJSONIconsData } from '@iconify/types'
+import type { PluginOptions } from './types'
+
+import { convertParsedSVG, parseSVGContent } from '@iconify/utils'
 import fs from 'fs-extra'
-import { basename, extname, join, resolve } from 'pathe'
+import { join, resolve } from 'pathe'
+import { filename } from 'pathe/utils'
 import { glob } from 'tinyglobby'
-import { notNullish, objectMap } from './utils'
+import { notNullish } from './utils'
 
 export async function normalizeIcons(options: PluginOptions, cwd: string): Promise<IconifyJSONIconsData[] | false> {
   return options.collections && Object.keys(options.collections).length > 0
@@ -25,7 +29,7 @@ export async function normalizeIcons(options: PluginOptions, cwd: string): Promi
                 return
 
               return [
-                basename(name, extname(name)),
+                filename(name),
                 iconifyIcon,
               ] as const
             }),
@@ -41,32 +45,7 @@ export async function normalizeIcons(options: PluginOptions, cwd: string): Promi
     : false
 }
 
-/**
- * 1. width
- * 2. height
- * 3. body
- */
-export const SVG_REGEX = /<svg[^>]*?viewBox="\s*\d+\s+\d+\s+(\d+)\s+(\d+)\s*"[^>]*>(.*?)<\/svg>/s
-
-export function parseIcon(svg: string): IconifyIcon | null {
-  const match = svg.match(SVG_REGEX)
-
-  const width = Number(match?.[1])
-  const height = Number(match?.[2])
-
-  return !!match && !Number.isNaN(width) && !Number.isNaN(height)
-    ? {
-        width,
-        height,
-        body: match[3].trim(),
-      }
-    : null
-}
-
-export function parseIcons(icons: Record<string, string>): IconifyJSONIconsData['icons'] {
-  return objectMap(icons, (k, v) => {
-    const val = parseIcon(v)
-
-    return val ? [k, val] : undefined
-  })
+export function parseIcon(svg: string): IconifyIcon | undefined {
+  const val = parseSVGContent(svg)
+  return val && convertParsedSVG(val)
 }

@@ -27,31 +27,3 @@ export interface PluginOptions {
    */
   output?: string
 }
-
-export interface IconifyIcon {
-  body: string
-
-  // Left position of viewBox.
-  // Defaults to 0.
-  left?: number
-
-  // Top position of viewBox.
-  // Defaults to 0.
-  top?: number
-
-  // Width of viewBox.
-  // Defaults to 16.
-  width?: number
-
-  // Height of viewBox.
-  // Defaults to 16.
-  height?: number
-}
-
-export interface IconifyJSONIconsData {
-  // Prefix for icons in JSON file, required.
-  prefix: string
-
-  // List of icons, required.
-  icons: Record<string, IconifyIcon>
-}
