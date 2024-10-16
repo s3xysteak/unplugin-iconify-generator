@@ -10,36 +10,45 @@ import { createUnplugin } from 'unplugin'
 import { injectJsonc } from './jsonc'
 import { normalizeIcons } from './parser'
 
-export default createUnplugin<PluginOptions | undefined>((options = {}) => {
-  const {
-    cwd = process.cwd(),
-    iconifyIntelliSense = true,
-    output = './node_modules/.unplugin-iconify-generator',
-    collections,
-  } = options
+function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptions {
+  const defaultOptions: PluginOptions = {
+    cwd: process.cwd(),
+    iconifyIntelliSense: true,
+    output: './node_modules/.unplugin-iconify-generator',
+    collections: {},
+  }
+
+  return {
+    ...defaultOptions,
+    ...userOptions,
+  }
+}
+
+export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions = {}) => {
+  const opts = resolveOptions(userOptions)
 
   const run = debounce(async () => {
-    const list = await normalizeIcons(options, cwd)
+    const list = await normalizeIcons(opts, opts.cwd)
 
     if (!list)
       return
 
     const outputPath: string[] = []
     for (const { prefix, icons } of list) {
-      const path = resolve(cwd, output, `${prefix}.json`)
+      const path = resolve(opts.cwd, opts.output, `${prefix}.json`)
       await fs.outputFile(path, JSON.stringify({ prefix, icons }))
       outputPath.push(path)
     }
 
     // vscode setting
-    if (iconifyIntelliSense) {
-      const settingPath = typeof iconifyIntelliSense === 'string'
-        ? iconifyIntelliSense
-        : resolve(cwd, './.vscode/settings.json')
+    if (opts.iconifyIntelliSense) {
+      const settingPath = typeof opts.iconifyIntelliSense === 'string'
+        ? opts.iconifyIntelliSense
+        : resolve(opts.cwd, './.vscode/settings.json')
 
       await fs.ensureFile(settingPath)
       const settingText = await fs.readFile(settingPath, 'utf-8')
-      const result = outputPath.map(absolute => relative(cwd, absolute))
+      const result = outputPath.map(absolute => relative(opts.cwd, absolute))
 
       await fs.outputFile(settingPath, injectJsonc(settingText, 'iconify.customCollectionJsonPaths', result))
     }
@@ -55,11 +64,11 @@ export default createUnplugin<PluginOptions | undefined>((options = {}) => {
   return {
     name: 'unplugin-iconify-generator',
     buildStart() {
-      const pathList = Object.values(collections ?? {}).map(p => isAbsolute(p) ? p : join(cwd, p))
+      const pathList = Object.values(opts.collections).map(p => isAbsolute(p) ? p : join(opts.cwd, p))
 
       watcher = chokidar
         .watch(pathList, {
-          cwd,
+          cwd: opts.cwd,
           persistent: true,
         })
         .on('add', watchCb)
