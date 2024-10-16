@@ -36,8 +36,8 @@ export default defineConfig({
 
 According to the config above, assume that you have a icon `bar.svg`, put it into `./src/assets/icons/`:
 
-- By default, iconify-formatted JSON is generated in the `<root>/node_modules/.unplugin-iconify-generator` folder.
-- Modify `.vscode/settings.json` to allow `antfu.iconify` to fetch custom icons. This process is implemented using `jsonc-parser`, which could preserve comments and maintain the configuration file format.
+- By default, iconify-formatted JSON is generated in the `<root>/node_modules/.unplugin-iconify-generator` folder by this plugin.
+- Then this plugin will modify `.vscode/settings.json` to allow `antfu.iconify` to fetch custom icons. This process is implemented using `jsonc-parser`, which could preserve comments and maintain the configuration file format.
 - When typing `i-foo-bar` in the code, you can get corresponding code suggestions and icon thumbnails, where `foo` is the prefix from the configuration, and `bar` is the filename of the icon. For more DX-related features, refer to the [antfu.iconify](https://github.com/antfu/vscode-iconify) documentation.
 
 More details and options, please refer to the *Options* chapter below.

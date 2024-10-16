@@ -36,9 +36,9 @@ export default defineConfig({
 
 根据上述配置，假设你有图标 `bar.svg` ，将其放入 `./src/assets/icons/`:
 
-- 默认在 `<root>/node_modules/.unplugin-iconify-generator` 文件夹内生成 iconify 格式的json。
-- 修改 `.vscode/settings.json` 使 `antfu.iconify` 获取自定义图标。这个过程通过 `jsonc-parser` 实现，应当能够保留注释并保持配置文件的格式。
-- 在代码中输入 `i-foo-bar` 可以获得相应的代码联想与图标缩略图，其中`foo`为配置中的前缀，`bar`为图标文件名称。更多DX相关的特性请参见 [antfu.iconify](https://github.com/antfu/vscode-iconify) 文档。
+- 此插件默认在 `<root>/node_modules/.unplugin-iconify-generator` 文件夹内生成 iconify 格式的json。
+- 此插件会修改 `.vscode/settings.json` 使 `antfu.iconify` 获取自定义图标。这个过程通过 `jsonc-parser` 实现，应当能够保留注释并保持配置文件的格式。
+- 你可以在代码中输入 `i-foo-bar` 以获得相应的代码联想与图标缩略图，其中`foo`为配置中的前缀，`bar`为图标文件名称。更多DX相关的特性请参见 [antfu.iconify](https://github.com/antfu/vscode-iconify) 文档。
 
 更多详细选项与配置，请见下文 *选项* 章节。
 
