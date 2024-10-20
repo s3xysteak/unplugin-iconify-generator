@@ -1,5 +1,20 @@
+import type { PluginOptions } from './types'
+import fs from 'fs-extra'
 import * as jsonc from 'jsonc-parser'
+import { resolve } from 'pathe'
 import { toArray } from './utils'
+
+/** write customCollectionJsonPaths into vscode settings */
+export async function writeIntoVscodeSettings(opts: PluginOptions, result: any) {
+  const settingPath = typeof opts.iconifyIntelliSense === 'string'
+    ? opts.iconifyIntelliSense
+    : resolve(opts.cwd, './.vscode/settings.json')
+
+  await fs.ensureFile(settingPath)
+  const settingText = await fs.readFile(settingPath, 'utf-8')
+
+  await fs.outputFile(settingPath, injectJsonc(settingText, 'iconify.customCollectionJsonPaths', result))
+}
 
 export function injectJsonc(jsonText: string, key: string | jsonc.JSONPath, newValue: any) {
   const { insertSpaces, tabSize } = detectIndentation(jsonText)

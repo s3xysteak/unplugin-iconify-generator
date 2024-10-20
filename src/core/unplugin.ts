@@ -1,16 +1,19 @@
+import type { IconifyJSONIconsData } from '@iconify/types'
 import type { FSWatcher } from 'chokidar'
 import type { PluginOptions } from './types'
 import process from 'node:process'
 import chokidar from 'chokidar'
 import fs from 'fs-extra'
-import { isAbsolute, join, relative, resolve } from 'pathe'
+import { dirname, isAbsolute, join, normalize, resolve } from 'pathe'
 import { debounce } from 'perfect-debounce'
+
 import { createUnplugin } from 'unplugin'
-
-import { injectJsonc } from './jsonc'
+import { writeIntoVscodeSettings } from './jsonc'
 import { normalizeIcon } from './parser'
+import { mapReverse } from './utils'
 
-function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptions {
+// _internals
+export function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptions {
   const defaultOptions: PluginOptions = {
     cwd: process.cwd(),
     iconifyIntelliSense: true,
@@ -18,56 +21,94 @@ function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptions {
     collections: {},
   }
 
-  return {
+  const result = {
     ...defaultOptions,
     ...userOptions,
   }
+
+  return {
+    ...result,
+    collections: Object.fromEntries(
+      Object.entries(result.collections)
+        .map(([prefix, path]) => [prefix, normalize(path).replace(/\/$/, '')]),
+    ),
+  }
+}
+
+function warn(msg: string) {
+  return console.warn(`[iconify] ${msg}`)
 }
 
 export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions = {}) => {
   const opts = resolveOptions(userOptions)
 
-  const run = debounce(async () => {
-    const icons = await Promise.all(
-      Object.entries(opts.collections)
-        .map(([prefix, path]) => normalizeIcon(opts, prefix, path)),
-    )
-    const outputPaths = await Promise.all(
-      icons.map(async ({ prefix, icons }) => {
-        const path = resolve(opts.cwd, opts.output, `${prefix}.json`)
-        await fs.outputFile(path, JSON.stringify({ prefix, icons }))
-        return path
+  /** icons path - prefix[] */
+  const iconPrefixesMap = mapReverse(new Map(Object.entries(opts.collections)))
+  const prefixOutputMap = new Map(
+    Object.keys(opts.collections)
+      .map(prefix => [
+        prefix,
+        resolve(opts.cwd, opts.output, `${prefix}.json`)
+          /**
+           * vscode fs watcher do not work when the first letter is uppercase
+           * so should replace it to the lowercase
+           */
+          .replace(/^([a-z]):\//i, (_, $1: string) => `${$1.toLowerCase()}:/`),
+      ]),
+  )
+
+  /** prefix - update debounce */
+  const callbacks = new Map<string, () => Promise<void>>()
+
+  const watchCb = async (icon: string) => {
+    if (!icon.endsWith('.svg'))
+      return
+
+    const iconDir = dirname(resolve(opts.cwd, icon))
+    const prefixes = iconPrefixesMap.get(iconDir)
+    if (!prefixes)
+      return warn(`Cannot find ${prefixes}: ${icon}`)
+
+    await Promise.all(
+      prefixes.map(async (prefix) => {
+        if (callbacks.has(prefix)) {
+          callbacks.get(prefix)!()
+        }
+        else {
+          const cb = debounce(async () => {
+            const output = prefixOutputMap.get(prefix)
+            if (!output)
+              return warn(`Cannot find ${prefix}: ${output}`)
+
+            const iconify = await normalizeIcon(opts, prefix, iconDir)
+            await fs.outputFile(output, JSON.stringify(iconify))
+          }, 100)
+          callbacks.set(prefix, cb)
+          await cb()
+        }
       }),
     )
-
-    // vscode setting
-    if (opts.iconifyIntelliSense) {
-      const settingPath = typeof opts.iconifyIntelliSense === 'string'
-        ? opts.iconifyIntelliSense
-        : resolve(opts.cwd, './.vscode/settings.json')
-
-      await fs.ensureFile(settingPath)
-      const settingText = await fs.readFile(settingPath, 'utf-8')
-      const result = outputPaths.map(absolute => relative(opts.cwd, absolute))
-
-      await fs.outputFile(settingPath, injectJsonc(settingText, 'iconify.customCollectionJsonPaths', result))
-    }
-  }, 100)
-
-  const watchCb = async (path: string) => {
-    if (path.endsWith('.svg'))
-      await run()
   }
 
   let watcher: FSWatcher
 
   return {
     name: 'unplugin-iconify-generator',
-    buildStart() {
-      const pathList = Object.values(opts.collections).map(p => isAbsolute(p) ? p : join(opts.cwd, p))
+    async buildStart() {
+      /**
+       * antfu.iconify cannot fsWatch a nonexistent file
+       * so create empty iconifyJSON files first, then update vscode settings
+       */
+      for (const [prefix, output] of prefixOutputMap.entries()) {
+        await fs.outputFile(output, JSON.stringify(<IconifyJSONIconsData>{ prefix, icons: {} }))
+      }
+      if (opts.iconifyIntelliSense)
+        await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()))
+
+      const iconPathList = Object.values(opts.collections).map(p => isAbsolute(p) ? p : join(opts.cwd, p))
 
       watcher = chokidar
-        .watch(pathList, {
+        .watch(iconPathList, {
           cwd: opts.cwd,
           persistent: true,
         })
