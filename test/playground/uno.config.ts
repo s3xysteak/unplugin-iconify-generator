@@ -6,13 +6,18 @@ export default defineConfig({
     presetUno(),
     presetIcons({
       collections: {
-        hi: FileSystemIconLoader(
-          './src/icons',
-          svg => svg
-            .replace(/(<svg.*?width=)"(.*?)"/, '$1"1em"')
-            .replace(/(<svg.*?height=)"(.*?)"/, '$1"1em"'),
-        ),
+        foo: r('./src/foo'),
+        bar: r('./src/bar'),
       },
     }),
   ],
 })
+
+function r(path: string) {
+  return FileSystemIconLoader(
+    path,
+    svg => svg
+      .replace(/(<svg.*?width=)"(.*?)"/, '$1"1em"')
+      .replace(/(<svg.*?height=)"(.*?)"/, '$1"1em"'),
+  )
+}

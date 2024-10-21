@@ -13,7 +13,8 @@ export default defineConfig({
     UnoCSS(),
     Iconify({
       collections: {
-        hi: r('./src/icons'),
+        foo: r('./src/foo'),
+        bar: './test/playground/src/bar',
       },
       cwd: r('../../'),
     }),

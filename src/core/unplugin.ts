@@ -4,7 +4,7 @@ import type { PluginOptions } from './types'
 import process from 'node:process'
 import chokidar from 'chokidar'
 import fs from 'fs-extra'
-import { dirname, isAbsolute, join, normalize, resolve } from 'pathe'
+import { dirname, isAbsolute, join, resolve } from 'pathe'
 import { debounce } from 'perfect-debounce'
 
 import { createUnplugin } from 'unplugin'
@@ -30,7 +30,7 @@ export function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptio
     ...result,
     collections: Object.fromEntries(
       Object.entries(result.collections)
-        .map(([prefix, path]) => [prefix, normalize(path).replace(/\/$/, '')]),
+        .map(([prefix, path]) => [prefix, resolve(result.cwd, path).replace(/\/$/, '')]),
     ),
   }
 }
