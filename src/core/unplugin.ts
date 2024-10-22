@@ -52,7 +52,9 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
     Object.keys(opts.collections)
       .map(prefix => [
         prefix,
-        resolve(opts.cwd, opts.output, `${prefix}.json`),
+        isAbsolute(opts.output)
+          ? resolve(opts.output, `${prefix}.json`)
+          : resolve(opts.cwd, opts.output, `${prefix}.json`),
       ]),
   )
 
@@ -91,11 +93,19 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
     )
   }
 
+  async function clearOutputDir() {
+    const outputDir = isAbsolute(opts.output) ? opts.output : resolve(opts.cwd, opts.output)
+    const isExistOutputDir = await fs.pathExists(outputDir)
+    isExistOutputDir && await fs.emptyDir(outputDir)
+  }
+
   let watcher: FSWatcher
 
   return {
     name: 'unplugin-iconify-generator',
     async buildStart() {
+      await clearOutputDir()
+
       /**
        * antfu.iconify cannot fsWatch a nonexistent file
        * so create empty iconifyJSON files first, then update vscode settings
