@@ -28,6 +28,7 @@ export function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptio
 
   return {
     ...result,
+    output: isAbsolute(result.output) ? normalize(result.output) : resolve(result.cwd, result.output),
     collections: Object.fromEntries(
       Object.entries(result.collections)
         .map(([prefix, path]) => [
@@ -52,9 +53,7 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
     Object.keys(opts.collections)
       .map(prefix => [
         prefix,
-        isAbsolute(opts.output)
-          ? resolve(opts.output, `${prefix}.json`)
-          : resolve(opts.cwd, opts.output, `${prefix}.json`),
+        resolve(opts.output, `${prefix}.json`),
       ]),
   )
 
@@ -93,18 +92,16 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
     )
   }
 
-  async function clearOutputDir() {
-    const outputDir = isAbsolute(opts.output) ? opts.output : resolve(opts.cwd, opts.output)
-    const isExistOutputDir = await fs.pathExists(outputDir)
-    isExistOutputDir && await fs.emptyDir(outputDir)
-  }
-
   let watcher: FSWatcher
 
   return {
     name: 'unplugin-iconify-generator',
     async buildStart() {
-      await clearOutputDir()
+      /**
+       * Clear output directory
+       */
+      await fs.pathExists(opts.output)
+        .then(async is => is && await fs.emptyDir(opts.output))
 
       /**
        * antfu.iconify cannot fsWatch a nonexistent file
@@ -113,6 +110,7 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
       for (const [prefix, output] of prefixOutputMap.entries()) {
         await fs.outputFile(output, JSON.stringify(<IconifyJSONIconsData>{ prefix, icons: {} }))
       }
+
       /**
        * vscode fs watcher do not work when the first letter is uppercase
        * so should replace it to the lowercase
@@ -121,7 +119,6 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
         await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()).map(lowercaseDriver))
 
       const iconPathList = Object.values(opts.collections).map(p => isAbsolute(p) ? p : resolve(opts.cwd, p))
-
       watcher = chokidar
         .watch(iconPathList, {
           cwd: opts.cwd,
