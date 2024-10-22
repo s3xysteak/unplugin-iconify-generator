@@ -1,7 +1,7 @@
 {
   "name": "unplugin-iconify-generator",
   "type": "module",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "private": false,
   "packageManager": "pnpm@9.11.0",
   "description": "Automatically generate iconify format json, support Iconify Intellisense",
