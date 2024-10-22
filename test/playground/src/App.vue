@@ -1,6 +1,8 @@
 <template>
-  <div class="flex items-center justify-center">
-    <div class="i-foo-uno text-60" />
-    <div class="i-bar-uno text-60" />
+  <div class="grid cols-4 text-60">
+    <div class="i-absolute-uno" />
+    <div class="i-relative-uno" />
+    <div class="i-abs-slash-end-uno" />
+    <div class="i-rel-slash-end-uno" />
   </div>
 </template>

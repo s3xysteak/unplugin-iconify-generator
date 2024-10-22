@@ -4,13 +4,13 @@ import type { PluginOptions } from './types'
 import process from 'node:process'
 import chokidar from 'chokidar'
 import fs from 'fs-extra'
-import { dirname, isAbsolute, join, resolve } from 'pathe'
+import { dirname, isAbsolute, normalize, resolve } from 'pathe'
 import { debounce } from 'perfect-debounce'
 
 import { createUnplugin } from 'unplugin'
 import { writeIntoVscodeSettings } from './jsonc'
 import { normalizeIcon } from './parser'
-import { mapReverse } from './utils'
+import { lowercaseDriver, mapReverse } from './utils'
 
 // _internals
 export function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptions {
@@ -30,7 +30,13 @@ export function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptio
     ...result,
     collections: Object.fromEntries(
       Object.entries(result.collections)
-        .map(([prefix, path]) => [prefix, resolve(result.cwd, path).replace(/\/$/, '')]),
+        .map(([prefix, path]) => [
+          prefix,
+          (isAbsolute(path)
+            ? normalize(path)
+            : resolve(result.cwd, path)
+          ).replace(/\/$/, ''),
+        ]),
     ),
   }
 }
@@ -42,23 +48,18 @@ function warn(msg: string) {
 export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions = {}) => {
   const opts = resolveOptions(userOptions)
 
-  /** icons path - prefix[] */
-  const iconPrefixesMap = mapReverse(new Map(Object.entries(opts.collections)))
   const prefixOutputMap = new Map(
     Object.keys(opts.collections)
       .map(prefix => [
         prefix,
-        resolve(opts.cwd, opts.output, `${prefix}.json`)
-          /**
-           * vscode fs watcher do not work when the first letter is uppercase
-           * so should replace it to the lowercase
-           */
-          .replace(/^([a-z]):\//i, (_, $1: string) => `${$1.toLowerCase()}:/`),
+        resolve(opts.cwd, opts.output, `${prefix}.json`),
       ]),
   )
 
   /** prefix - update debounce */
   const callbacks = new Map<string, () => Promise<void>>()
+  /** icons path - prefix[] */
+  const iconPrefixesMap = mapReverse(new Map(Object.entries(opts.collections)))
 
   const watchCb = async (icon: string) => {
     if (!icon.endsWith('.svg'))
@@ -102,10 +103,14 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
       for (const [prefix, output] of prefixOutputMap.entries()) {
         await fs.outputFile(output, JSON.stringify(<IconifyJSONIconsData>{ prefix, icons: {} }))
       }
+      /**
+       * vscode fs watcher do not work when the first letter is uppercase
+       * so should replace it to the lowercase
+       */
       if (opts.iconifyIntelliSense)
-        await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()))
+        await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()).map(lowercaseDriver))
 
-      const iconPathList = Object.values(opts.collections).map(p => isAbsolute(p) ? p : join(opts.cwd, p))
+      const iconPathList = Object.values(opts.collections).map(p => isAbsolute(p) ? p : resolve(opts.cwd, p))
 
       watcher = chokidar
         .watch(iconPathList, {

@@ -1,4 +1,4 @@
-import { extname, join, normalize } from 'pathe'
+import { extname, isAbsolute, join, normalize } from 'pathe'
 
 export function toArray<T>(array?: T | T[]): T[] {
   array = array ?? []
@@ -36,4 +36,8 @@ export function mapReverse<K, V>(map: Map<K, V>): Map<V, K[]> {
     reverseMap.get(value)!.push(key)
   })
   return reverseMap
+}
+
+export function lowercaseDriver(path: string): string {
+  return isAbsolute(path) ? normalize(path).replace(/^([a-z]):\//i, (_, $1: string) => `${$1.toLowerCase()}:/`) : path
 }

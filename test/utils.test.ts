@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { lastFolder, mapReverse } from '../src/core/utils'
+import { lastFolder, lowercaseDriver, mapReverse } from '../src/core/utils'
 
 describe('utils', () => {
+  it('lowercaseDriver', () => {
+    expect(lowercaseDriver('abc')).toBe('abc')
+    expect(lowercaseDriver('/abc')).toBe('/abc')
+    expect(lowercaseDriver('e:/a')).toBe('e:/a')
+    expect(lowercaseDriver('E:/a')).toBe('e:/a')
+  })
+
   it('mapReverse', () => {
     expect(
       mapReverse(new Map(Object.entries({

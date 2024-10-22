@@ -5,10 +5,9 @@ export default defineConfig({
   presets: [
     presetUno(),
     presetIcons({
-      collections: {
-        foo: r('./src/foo'),
-        bar: r('./src/bar'),
-      },
+      collections: Object.fromEntries(
+        ['absolute', 'relative', 'rel-slash-end', 'abs-slash-end'].map(p => [p, r('./src/foo')]),
+      ),
     }),
   ],
 })

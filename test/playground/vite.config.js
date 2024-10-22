@@ -13,8 +13,10 @@ export default defineConfig({
     UnoCSS(),
     Iconify({
       collections: {
-        foo: r('./src/foo'),
-        bar: './test/playground/src/bar',
+        'absolute': r('./src/foo'),
+        'relative': './test/playground/src/foo',
+        'rel-slash-end': './test/playground/src/foo/',
+        'abs-slash-end': r('./src/foo/'),
       },
       cwd: r('../../'),
     }),
