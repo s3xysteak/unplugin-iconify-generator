@@ -7,6 +7,12 @@ export interface PluginOptions {
   iconifyIntelliSense: boolean | string
 
   /**
+   * Setting `iconify.customCollectionJsonPaths` relative path
+   * @default true
+   */
+  relativePath: boolean
+
+  /**
    * @default process.cwd()
    */
   cwd: string

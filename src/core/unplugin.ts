@@ -4,7 +4,7 @@ import type { PluginOptions } from './types'
 import process from 'node:process'
 import chokidar from 'chokidar'
 import fs from 'fs-extra'
-import { dirname, isAbsolute, normalize, resolve } from 'pathe'
+import { dirname, isAbsolute, normalize, relative, resolve } from 'pathe'
 import { debounce } from 'perfect-debounce'
 
 import { createUnplugin } from 'unplugin'
@@ -19,6 +19,7 @@ export function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptio
     iconifyIntelliSense: true,
     output: './node_modules/.unplugin-iconify-generator',
     collections: {},
+    relativePath: true,
   }
 
   const result = {
@@ -115,8 +116,12 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
        * vscode fs watcher do not work when the first letter is uppercase
        * so should replace it to the lowercase
        */
-      if (opts.iconifyIntelliSense)
-        await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()).map(lowercaseDriver))
+      if (opts.iconifyIntelliSense) {
+        let paths = Array.from(prefixOutputMap.values())
+        if (opts.relativePath)
+          paths = paths.map(path => relative(opts.cwd, path))
+        await writeIntoVscodeSettings(opts, paths.map(lowercaseDriver))
+      }
 
       const iconPathList = Object.values(opts.collections).map(p => isAbsolute(p) ? p : resolve(opts.cwd, p))
       watcher = chokidar
