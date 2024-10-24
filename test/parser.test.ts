@@ -2,8 +2,8 @@ import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
+import { resolveOptions } from '../src/core/options'
 import { normalizeIcon, parseIcon } from '../src/core/parser'
-import { resolveOptions } from '../src/core/unplugin'
 
 describe('parser', () => {
   it('parseIcon', async () => {

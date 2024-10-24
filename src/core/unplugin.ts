@@ -1,46 +1,16 @@
 import type { IconifyJSONIconsData } from '@iconify/types'
 import type { FSWatcher } from 'chokidar'
 import type { PluginOptions } from './types'
-import process from 'node:process'
 import chokidar from 'chokidar'
 import fs from 'fs-extra'
-import { dirname, isAbsolute, normalize, resolve } from 'pathe'
+import { dirname, isAbsolute, resolve } from 'pathe'
 import { debounce } from 'perfect-debounce'
 
 import { createUnplugin } from 'unplugin'
 import { writeIntoVscodeSettings } from './jsonc'
+import { resolveOptions } from './options'
 import { normalizeIcon } from './parser'
 import { lowercaseDriver, mapReverse } from './utils'
-
-// _internals
-export function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptions {
-  const defaultOptions: PluginOptions = {
-    cwd: process.cwd(),
-    iconifyIntelliSense: true,
-    output: './node_modules/.unplugin-iconify-generator',
-    collections: {},
-  }
-
-  const result = {
-    ...defaultOptions,
-    ...userOptions,
-  }
-
-  return {
-    ...result,
-    output: isAbsolute(result.output) ? normalize(result.output) : resolve(result.cwd, result.output),
-    collections: Object.fromEntries(
-      Object.entries(result.collections)
-        .map(([prefix, path]) => [
-          prefix,
-          (isAbsolute(path)
-            ? normalize(path)
-            : resolve(result.cwd, path)
-          ).replace(/\/$/, ''),
-        ]),
-    ),
-  }
-}
 
 function warn(msg: string) {
   return console.warn(`[iconify] ${msg}`)
