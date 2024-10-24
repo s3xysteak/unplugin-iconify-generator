@@ -3,22 +3,19 @@ import type { FSWatcher } from 'chokidar'
 import type { PluginOptions } from './types'
 import chokidar from 'chokidar'
 import fs from 'fs-extra'
-import { dirname, isAbsolute, resolve } from 'pathe'
+import { dirname, relative, resolve } from 'pathe'
 import { debounce } from 'perfect-debounce'
 
 import { createUnplugin } from 'unplugin'
 import { writeIntoVscodeSettings } from './jsonc'
 import { resolveOptions } from './options'
 import { normalizeIcon } from './parser'
-import { lowercaseDriver, mapReverse } from './utils'
-
-function warn(msg: string) {
-  return console.warn(`[iconify] ${msg}`)
-}
+import { mapReverse } from './utils'
 
 export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions = {}) => {
   const opts = resolveOptions(userOptions)
 
+  /** output is absolute path */
   const prefixOutputMap = new Map(
     Object.keys(opts.collections)
       .map(prefix => [
@@ -31,14 +28,29 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
   const callbacks = new Map<string, () => Promise<void>>()
   /** icons path - prefix[] */
   const iconPrefixesMap = mapReverse(new Map(Object.entries(opts.collections)))
+  function getPrefixes(icon: string) {
+    let iconDir: string | undefined
+
+    const rel = dirname(icon)
+    const abs = resolve(opts.cwd, rel)
+
+    const prefixes = [
+      ...iconPrefixesMap.has(rel) ? iconPrefixesMap.get(iconDir = rel)! : [],
+      ...iconPrefixesMap.has(abs) ? iconPrefixesMap.get(iconDir = abs)! : [],
+    ]
+
+    return {
+      prefixes,
+      iconDir,
+    }
+  }
 
   const watchCb = async (icon: string) => {
     if (!icon.endsWith('.svg'))
       return
 
-    const iconDir = dirname(resolve(opts.cwd, icon))
-    const prefixes = iconPrefixesMap.get(iconDir)
-    if (!prefixes)
+    const { iconDir, prefixes } = getPrefixes(icon)
+    if (!prefixes || !iconDir)
       return warn(`Cannot find ${prefixes}: ${icon}`)
 
     await Promise.all(
@@ -86,11 +98,10 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
        * so should replace it to the lowercase
        */
       if (opts.iconifyIntelliSense)
-        await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()).map(lowercaseDriver))
+        await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()).map(p => relative(opts.cwd, p)))
 
-      const iconPathList = Object.values(opts.collections).map(p => isAbsolute(p) ? p : resolve(opts.cwd, p))
       watcher = chokidar
-        .watch(iconPathList, {
+        .watch(Object.values(opts.collections), {
           cwd: opts.cwd,
           persistent: true,
         })
@@ -103,3 +114,7 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
     },
   }
 })
+
+function warn(msg: string) {
+  return console.warn(`[iconify] ${msg}`)
+}

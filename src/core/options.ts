@@ -23,10 +23,7 @@ export function resolveOptions(userOptions: Partial<PluginOptions>): PluginOptio
       Object.entries(result.collections)
         .map(([prefix, path]) => [
           prefix,
-          (isAbsolute(path)
-            ? normalize(path)
-            : resolve(result.cwd, path)
-          ).replace(/\/$/, ''),
+          normalize(path).replace(/\/$/, ''),
         ]),
     ),
   }
