@@ -8,6 +8,7 @@ export default defineConfig({
     },
     coverage: {
       include: ['src/core/**/*.ts'],
+      exclude: ['src/core/types.ts'],
       reporter: ['html'],
     },
   },
