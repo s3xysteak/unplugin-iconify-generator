@@ -1,0 +1,8 @@
+{
+  "iconify.customCollectionJsonPaths": [
+    "ctx-lab/output/absolute.json",
+    "ctx-lab/output/relative.json",
+    "ctx-lab/output/rel-slash-end.json",
+    "ctx-lab/output/abs-slash-end.json"
+  ]
+}

@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ctx 1`] = `"{"prefix":"absolute","icons":{}}"`;
+
+exports[`ctx 2`] = `"{"prefix":"relative","icons":{}}"`;
+
+exports[`ctx 3`] = `"{"prefix":"rel-slash-end","icons":{}}"`;
+
+exports[`ctx 4`] = `"{"prefix":"abs-slash-end","icons":{}}"`;
+
+exports[`ctx 5`] = `
+"{
+  "iconify.customCollectionJsonPaths": [
+    "ctx-lab/output/absolute.json",
+    "ctx-lab/output/relative.json",
+    "ctx-lab/output/rel-slash-end.json",
+    "ctx-lab/output/abs-slash-end.json"
+  ]
+}"
+`;
+
+exports[`ctx 10`] = `"{"prefix":"absolute","icons":{}}"`;
+
+exports[`ctx 11`] = `"{"prefix":"relative","icons":{}}"`;
+
+exports[`ctx 12`] = `"{"prefix":"rel-slash-end","icons":{}}"`;
+
+exports[`ctx 13`] = `"{"prefix":"abs-slash-end","icons":{}}"`;
