@@ -6,5 +6,9 @@ export default defineConfig({
     typecheck: {
       enabled: true,
     },
+    coverage: {
+      include: ['src/core/**/*.ts'],
+      reporter: ['html'],
+    },
   },
 })
