@@ -12,9 +12,7 @@ import { resolveOptions } from './options'
 import { normalizeIcon } from './parser'
 import { mapReverse } from './utils'
 
-export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions = {}) => {
-  const opts = resolveOptions(userOptions)
-
+export function createContext(opts: PluginOptions) {
   /** output is absolute path */
   const prefixOutputMap = new Map(
     Object.keys(opts.collections)
@@ -77,29 +75,7 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
   let watcher: FSWatcher
 
   return {
-    name: 'unplugin-iconify-generator',
-    async buildStart() {
-      /**
-       * Clear output directory
-       */
-      await fs.pathExists(opts.output)
-        .then(async is => is && await fs.emptyDir(opts.output))
-
-      /**
-       * antfu.iconify cannot fsWatch a nonexistent file
-       * so create empty iconifyJSON files first, then update vscode settings
-       */
-      for (const [prefix, output] of prefixOutputMap.entries()) {
-        await fs.outputFile(output, JSON.stringify(<IconifyJSONIconsData>{ prefix, icons: {} }))
-      }
-
-      /**
-       * vscode fs watcher do not work when the first letter is uppercase
-       * so should replace it to the lowercase
-       */
-      if (opts.iconifyIntelliSense)
-        await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()).map(p => relative(opts.cwd, p)))
-
+    watchStart() {
       watcher = chokidar
         .watch(Object.values(opts.collections), {
           cwd: opts.cwd,
@@ -109,8 +85,43 @@ export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions =
         .on('change', watchCb)
         .on('unlink', watchCb)
     },
-    async buildEnd() {
+    async watchEnd() {
       await watcher.close()
+    },
+    async clearOutput() {
+      await fs.pathExists(opts.output)
+        .then(async is => is && await fs.emptyDir(opts.output))
+    },
+    async createEmptyIconifyJSON() {
+      for (const [prefix, output] of prefixOutputMap.entries()) {
+        await fs.outputFile(output, JSON.stringify(<IconifyJSONIconsData>{ prefix, icons: {} }))
+      }
+    },
+    async writeVscodeSettings() {
+      if (opts.iconifyIntelliSense)
+        await writeIntoVscodeSettings(opts, Array.from(prefixOutputMap.values()).map(p => relative(opts.cwd, p)))
+    },
+  }
+}
+
+export default createUnplugin<Partial<PluginOptions> | undefined>((userOptions = {}) => {
+  const opts = resolveOptions(userOptions)
+
+  const ctx = createContext(opts)
+
+  return {
+    name: 'unplugin-iconify-generator',
+    async buildStart() {
+      await ctx.clearOutput()
+
+      await ctx.createEmptyIconifyJSON()
+
+      await ctx.writeVscodeSettings()
+
+      ctx.watchStart()
+    },
+    async buildEnd() {
+      await ctx.watchEnd()
     },
   }
 })
