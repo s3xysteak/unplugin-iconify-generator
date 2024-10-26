@@ -27,15 +27,16 @@ it('ctx', async () => {
   for (const prefix of Object.keys(collections)) {
     expect(
       await fs.readFile(r(`./ctx-lab/output/${prefix}.json`), 'utf-8'),
-    ).toMatchSnapshot()
+    ).toMatchSnapshot('empty iconify json')
   }
-
-  ctx.watchStart()
 
   await ctx.writeVscodeSettings()
   expect(
     await fs.readFile(r('./.vscode/settings.json'), 'utf-8'),
-  ).toMatchSnapshot()
+  ).toMatchSnapshot('vscode settings')
+
+  ctx.watchStart()
+  await sleep(150)
 
   const initialOutputSnap = (file: string) => r(`./__snapshots__/initial-output-${file}.json`)
   for (const prefix of Object.keys(collections)) {
@@ -46,13 +47,15 @@ it('ctx', async () => {
 
   const dest = r('./ctx-lab/icons/test-1.svg')
   await fs.copyFile(r('./ctx-lab/icons/test.svg'), dest)
+  await sleep(150)
   for (const prefix of Object.keys(collections)) {
     expect(
       await fs.readFile(r(`./ctx-lab/output/${prefix}.json`), 'utf-8'),
-    ).toMatchSnapshot()
+    ).toMatchSnapshot('two icons iconify json')
   }
 
   await fs.unlink(dest)
+  await sleep(300)
   for (const prefix of Object.keys(collections)) {
     expect(
       await fs.readFile(r(`./ctx-lab/output/${prefix}.json`), 'utf-8'),
@@ -64,4 +67,8 @@ it('ctx', async () => {
 
 function r(path: string) {
   return fileURLToPath(new URL(path, import.meta.url))
+}
+
+function sleep(ms: number) {
+  return new Promise<void>(res => setTimeout(() => res(), ms))
 }
