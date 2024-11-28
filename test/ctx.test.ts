@@ -40,7 +40,7 @@ it('ctx', async () => {
 
   const initialOutputSnap = (file: string) => r(`./__snapshots__/initial-output-${file}.json`)
   for (const prefix of Object.keys(collections)) {
-    expect(
+    await expect(
       await fs.readFile(r(`./ctx-lab/output/${prefix}.json`), 'utf-8'),
     ).toMatchFileSnapshot(initialOutputSnap(prefix))
   }
@@ -57,7 +57,7 @@ it('ctx', async () => {
   await fs.unlink(dest)
   await sleep(300)
   for (const prefix of Object.keys(collections)) {
-    expect(
+    await expect(
       await fs.readFile(r(`./ctx-lab/output/${prefix}.json`), 'utf-8'),
     ).toMatchFileSnapshot(initialOutputSnap(prefix))
   }
